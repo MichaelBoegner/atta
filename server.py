@@ -1,7 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, make_response
 app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def hello_world():
     if request.method == 'POST':
-        return 'Hello, World!'
+        return request.json['challenge']
