@@ -3,7 +3,8 @@ import psycopg2
 import sys
 import pprint
 
-def insert_data(to_database):
+id = 0
+def insert_data(to_database, id):
     conn_string = "host='localhost' dbname='test' user='michaelboegner' password=''"
 	# print the connection string we will use to connect
     print("Connecting to database\n	->%s %", conn_string)
@@ -14,8 +15,11 @@ def insert_data(to_database):
 	# conn.cursor will return a cursor object, you can use this cursor to perform queries
     cursor = conn.cursor()
     print("Connected!\n")
-    cursor.execute(f"INSERT INTO weather VALUES ('{to_database}', 46, 50, 0.25, '1994-11-27');")
-    cursor.execute("SELECT * FROM weather")
+    cursor.execute("CREATE TABLE wins (id int, message varchar(240));")
+
+    id += 1
+    cursor.execute(f"INSERT INTO wins VALUES ({id},'{to_database}');")
+    cursor.execute("SELECT * FROM wins")
 
     records = cursor.fetchall()
     pprint.pprint(records)
@@ -27,7 +31,7 @@ app = Flask(__name__)
 def event_watcher():
     print("RECEIVED EVENT. REQUEST:",request.json['token'], "END RECEIVED JSON DATA------------")
     token_to_database = request.json['token']
-    insert_data(token_to_database)
+    insert_data(token_to_database, id)
     
     if request.json.get('challenge'):
         resp = request.json.get('challenge')
