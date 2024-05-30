@@ -46,6 +46,6 @@ def event_watcher():
     if request.json.get('challenge'):
         resp = request.json.get('challenge')
     else: 
-        resp = "great!"
+        resp = "POST / HTTP/1.1 200"
     return resp
 
