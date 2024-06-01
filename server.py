@@ -34,13 +34,12 @@ cursor = start_db_connection()
 def event_watcher():
     print("RECEIVED EVENT. REQUEST:",request.json['event']['text'], "END RECEIVED JSON DATA------------")
     event_msg_to_database = request.json['event']['text']
-    id = 1    
     cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
     if bool(cursor.rowcount):
-        insert_data(event_msg_to_database, cursor, id)
+        insert_data(event_msg_to_database, cursor)
     else:
         create_table_wins(cursor)
-        insert_data(event_msg_to_database, cursor, id)
+        insert_data(event_msg_to_database, cursor)
 
     if request.json.get('challenge'):
         resp = request.json.get('challenge')
