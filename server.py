@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import psycopg2
 import pprint
 
@@ -6,12 +6,13 @@ def create_table_wins(cursor):
     print("creating table wins\n")
     cursor.execute("CREATE TABLE wins (id SERIAL, message varchar(240));")
 
-def insert_data(to_database, cursor, id):
+def insert_data(to_database, cursor):
     cursor.execute(f"INSERT INTO wins (message) VALUES ('{to_database}');")
     cursor.execute("SELECT * FROM wins")
 
-    records = cursor.fetchall()
-    pprint.pprint(records)
+    data = cursor.fetchall()
+    pprint.pprint(data)
+    return render_template('template.html', data=data)
 
 #initiate Flask and receive calls
 app = Flask(__name__)
