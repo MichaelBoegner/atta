@@ -1,4 +1,4 @@
-from flask import Flask, request, make_response
+from flask import Flask, request
 import psycopg2
 import pprint
 
