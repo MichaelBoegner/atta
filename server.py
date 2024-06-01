@@ -4,11 +4,14 @@ import pprint
 
 def create_table_wins(cursor):
     print("creating table wins\n")
-    cursor.execute("CREATE TABLE wins (id int, message varchar(240));")
+    cursor.execute("CREATE TABLE wins (id SERIAL, message varchar(240));")
 
-def insert_data(to_database, cursor):
-    id = 1
-    cursor.execute(f"INSERT INTO wins VALUES ({id},'{to_database}');")
+def insert_data(to_database, cursor, id):
+    if 'id_to_send' in locals(): 
+        id_to_send += id
+    else: 
+        id_to_send = 1
+    cursor.execute(f"INSERT INTO wins (message) VALUES ('{to_database}');")
     cursor.execute("SELECT * FROM wins")
 
     records = cursor.fetchall()
@@ -33,15 +36,15 @@ cursor = start_db_connection()
 
 @app.route('/', methods=['POST'])
 def event_watcher():
-    print("RECEIVED EVENT. REQUEST:",request.json['token'], "END RECEIVED JSON DATA------------")
-    token_to_database = request.json['token']
+    print("RECEIVED EVENT. REQUEST:",request.json['event']['text'], "END RECEIVED JSON DATA------------")
+    event_msg_to_database = request.json['event']['text']
     id = 1    
     cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
     if bool(cursor.rowcount):
-        insert_data(token_to_database, cursor)
+        insert_data(event_msg_to_database, cursor, id)
     else:
         create_table_wins(cursor)
-        insert_data(token_to_database, cursor)
+        insert_data(event_msg_to_database, cursor, id)
 
     if request.json.get('challenge'):
         resp = request.json.get('challenge')
