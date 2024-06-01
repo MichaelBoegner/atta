@@ -7,10 +7,6 @@ def create_table_wins(cursor):
     cursor.execute("CREATE TABLE wins (id SERIAL, message varchar(240));")
 
 def insert_data(to_database, cursor, id):
-    if 'id_to_send' in locals(): 
-        id_to_send += id
-    else: 
-        id_to_send = 1
     cursor.execute(f"INSERT INTO wins (message) VALUES ('{to_database}');")
     cursor.execute("SELECT * FROM wins")
 
