@@ -42,12 +42,15 @@ def display_template():
 
 @app.route('/events', methods=['POST'])
 def event_watcher():
-    print("RECEIVED EVENT. REQUEST:",request.json.get('challenge'), "------------END RECEIVED JSON DATA------------")
-    if request.json.get('challenge'):
+    print("RECEIVED EVENT. REQUEST:",request.json, "------------END RECEIVED JSON DATA------------")
+    if 'challenge' in request.json:
         resp = request.json.get('challenge')
     else:
-        if request.json.get('event'):
-            event_msg_to_database = request.json['event']['text']
+        if 'event' in request.json:
+            if 'text' in request.json['event']:
+                event_msg_to_database = request.json['event']['text']
+        else:
+            event_msg_to_database = "This is an unknown message."
 
         cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
         if bool(cursor.rowcount):
