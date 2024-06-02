@@ -12,7 +12,10 @@ def insert_data(to_database, cursor):
 
     data = cursor.fetchall()
     pprint.pprint(data)
-    return render_template('template.html', data=data)
+    return data
+
+def renderer(data):
+    render_template('template.html', data=data)
 
 #initiate Flask and receive calls
 app = Flask(__name__)
@@ -31,20 +34,27 @@ def start_db_connection():
 
 cursor = start_db_connection()
 
-@app.route('/', methods=['POST'])
+@app.route('/events', methods=['POST'])
 def event_watcher():
-    print("RECEIVED EVENT. REQUEST:",request.json['event']['text'], "END RECEIVED JSON DATA------------")
-    event_msg_to_database = request.json['event']['text']
-    cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
-    if bool(cursor.rowcount):
-        insert_data(event_msg_to_database, cursor)
-    else:
-        create_table_wins(cursor)
-        insert_data(event_msg_to_database, cursor)
-
+    print("RECEIVED EVENT. REQUEST:",request.json.get('challenge'), "------------END RECEIVED JSON DATA------------")
     if request.json.get('challenge'):
         resp = request.json.get('challenge')
-    else: 
-        resp = "POST / HTTP/1.1 200"
+    else:
+        if request.json.get('event'):
+            event_msg_to_database = request.json['event']['text']
+
+        cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
+        if bool(cursor.rowcount):
+            insert_data(event_msg_to_database, cursor)            
+        else:
+            create_table_wins(cursor)
+            insert_data(event_msg_to_database, cursor)
+        
+        resp = "POST / HTTP/1.1 200" 
     return resp
 
+@app.route('/', methods=['GET'])
+def display_template():
+    cursor.execute("SELECT * FROM wins")
+    data = cursor.fetchall()
+    return render_template('template.html', data=data)
