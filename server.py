@@ -34,6 +34,12 @@ def start_db_connection():
 
 cursor = start_db_connection()
 
+@app.route('/', methods=['GET'])
+def display_template():
+    cursor.execute("SELECT * FROM wins")
+    data = cursor.fetchall()
+    return render_template('template.html', data=data)
+
 @app.route('/events', methods=['POST'])
 def event_watcher():
     print("RECEIVED EVENT. REQUEST:",request.json.get('challenge'), "------------END RECEIVED JSON DATA------------")
@@ -53,8 +59,3 @@ def event_watcher():
         resp = "POST / HTTP/1.1 200" 
     return resp
 
-@app.route('/', methods=['GET'])
-def display_template():
-    cursor.execute("SELECT * FROM wins")
-    data = cursor.fetchall()
-    return render_template('template.html', data=data)
