@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template
+from sentry_sdk import werkzeug
 import psycopg2
 import pprint
 
@@ -34,6 +35,11 @@ def start_db_connection():
 
 cursor = start_db_connection()
 
+class Event_Type(werkzeug.exceptions.HTTPException):
+    code = 507
+    description = 'Not a proper event.'
+
+
 @app.route('/', methods=['GET'])
 def display_template():
     cursor.execute("SELECT * FROM wins")
@@ -49,15 +55,17 @@ def event_watcher():
         if 'event' in request.json:
             if 'text' in request.json['event']:
                 event_msg_to_database = request.json['event']['text']
+                cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
+                if bool(cursor.rowcount):
+                    insert_data(event_msg_to_database, cursor)            
+                else:
+                    create_table_wins(cursor)
+                    insert_data(event_msg_to_database, cursor)
         else:
             event_msg_to_database = "This is an unknown message."
-
-        cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
-        if bool(cursor.rowcount):
-            insert_data(event_msg_to_database, cursor)            
-        else:
-            create_table_wins(cursor)
-            insert_data(event_msg_to_database, cursor)
+            handle_507 = Event_Type.description
+            app.register_error_handler(Event_Type, handle_507)
+            raise Event_Type()    
         
         resp = "POST / HTTP/1.1 200" 
     return resp
