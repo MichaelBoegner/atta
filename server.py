@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template
-from sentry_sdk import werkzeug
 import psycopg2
 import pprint
 
@@ -35,10 +34,6 @@ def start_db_connection():
 
 cursor = start_db_connection()
 
-class Event_Type(werkzeug.exceptions.HTTPException):
-    code = 507
-    description = 'Not a proper event.'
-
 
 @app.route('/', methods=['GET'])
 def display_template():
@@ -63,9 +58,6 @@ def event_watcher():
                     insert_data(event_msg_to_database, cursor)
         else:
             event_msg_to_database = "This is an unknown message."
-            handle_507 = Event_Type.description
-            app.register_error_handler(Event_Type, handle_507)
-            raise Event_Type()    
         
         resp = "POST / HTTP/1.1 200" 
     return resp
