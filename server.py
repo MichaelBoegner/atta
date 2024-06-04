@@ -1,39 +1,10 @@
 from flask import Flask, request, render_template
-import psycopg2
-import pprint
-
-def create_table_wins(cursor):
-    print("creating table wins\n")
-    cursor.execute("CREATE TABLE wins (id SERIAL, message varchar(240));")
-
-def insert_data(to_database, cursor):
-    cursor.execute(f"INSERT INTO wins (message) VALUES ('{to_database}');")
-    cursor.execute("SELECT * FROM wins")
-
-    data = cursor.fetchall()
-    pprint.pprint(data)
-    return data
-
-def renderer(data):
-    render_template('template.html', data=data)
+from helpers import start_db_connection, insert_data, create_table_wins
 
 #initiate Flask and receive calls
 app = Flask(__name__)
 
-def start_db_connection():
-    conn_string = "host='localhost' dbname='test' user='michaelboegner' password=''"
-	# print the connection string we will use to connect
-    print("Connecting to database\n	->%s %", conn_string)
-
-	# get a connection, if a connect cannot be made an exception will be raised here
-    conn = psycopg2.connect(conn_string)
-
-	# conn.cursor will return a cursor object, you can use this cursor to perform queries
-    cursor = conn.cursor()
-    return cursor
-
 cursor = start_db_connection()
-
 
 @app.route('/', methods=['GET'])
 def display_template():
@@ -61,4 +32,3 @@ def event_watcher():
         
         resp = "POST / HTTP/1.1 200" 
     return resp
-
