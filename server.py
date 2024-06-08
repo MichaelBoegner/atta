@@ -19,6 +19,7 @@ def event_watcher():
         resp = request.json.get('challenge')
     else:
         if 'event' in request.json:
+            resp = "POST /events HTTP/1.1 200" 
             if 'text' in request.json['event']:
                 event_msg_to_database = request.json['event']['text']
                 cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
@@ -28,7 +29,6 @@ def event_watcher():
                     create_table_wins(cursor)
                     insert_data(event_msg_to_database, cursor)
         else:
-            event_msg_to_database = "This is an unknown message."
+            resp= "Not an acceptable event type."
         
-        resp = "POST / HTTP/1.1 200" 
     return resp
