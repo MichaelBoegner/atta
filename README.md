@@ -1,5 +1,5 @@
-# webhook-receive-respond-test
-Testing basic functionality of:
+# Atta: A Slack-API Events ingestor to store evidence of your best work from Slack. 
+Currently, the app is:
 - Catching a call emitted from Slack's API
 - Publicizing my localhost through nGrok
 - Catching those calls using an endpoint built in Flask 
