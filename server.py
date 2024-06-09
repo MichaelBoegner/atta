@@ -21,13 +21,19 @@ def event_watcher():
         if 'event' in request.json:
             resp = "POST /events HTTP/1.1 200" 
             if 'text' in request.json['event']:
-                event_msg_to_database = request.json['event']['text']
+                to_database_event_msg = request.json['event']['text']
+                to_database_event_user = request.json['event']['user']
+                to_database = {
+                    'event_msg': to_database_event_msg,
+                    'event_user': to_database_event_user
+                }
+                print("to_database dict - - - - - - -- - -- \n", to_database['event_user'])
                 cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
                 if bool(cursor.rowcount):
-                    insert_data(event_msg_to_database, cursor)            
+                    insert_data(to_database, cursor)            
                 else:
                     create_table_wins(cursor)
-                    insert_data(event_msg_to_database, cursor)
+                    insert_data(to_database, cursor)
         else:
             resp= "Not an acceptable event type."
         

@@ -11,10 +11,15 @@ def start_db_connection():
 
 def create_table_wins(cursor):
     print("creating table wins\n")
-    cursor.execute("CREATE TABLE wins (id SERIAL, message varchar(240));")
+    cursor.execute("CREATE TABLE wins ( \
+                   id SERIAL, \
+                   userID VARCHAR(50), \
+                   message VARCHAR(240) \
+                   );")
 
 def insert_data(to_database, cursor):
-    cursor.execute(f"INSERT INTO wins (message) VALUES ('{to_database}');")
+    cursor.execute(f"INSERT INTO wins (userID, message) \
+                   VALUES ('{to_database['event_user']}','{to_database['event_msg']}');")
     cursor.execute("SELECT * FROM wins")
 
     data = cursor.fetchall()
