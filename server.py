@@ -6,9 +6,9 @@ app = Flask(__name__)
 
 cursor = start_db_connection()
 
-@app.route('/', methods=['GET'])
-def display_template():
-    cursor.execute("SELECT * FROM wins")
+@app.route('/user-id/<user_id>', methods=['GET'])
+def display_template(user_id):
+    cursor.execute(f"SELECT * FROM wins WHERE wins.userID = '{user_id}'")
     data = cursor.fetchall()
     return render_template('template.html', data=data)
 

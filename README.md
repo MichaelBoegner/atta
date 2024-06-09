@@ -3,6 +3,9 @@
 Atta is a way to store important/performance-review-worthy Slack messages for future review 
 or retrieval when prepping for a performance review. 
 
+## Trello Board of Progress:
+https://trello.com/b/RJnMt9Ba/atta-project
+
 ## What does the current version do? 
 Currently, the app is:
 - Catching a call emitted from Slack's API
