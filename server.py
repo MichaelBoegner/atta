@@ -14,7 +14,7 @@ def display_template():
 
 @app.route('/events', methods=['POST'])
 def event_watcher():
-    print("RECEIVED EVENT. REQUEST:",request.json, "------------END RECEIVED JSON DATA------------")
+    print("RECEIVED EVENT. REQUEST----------------\n:",request.json, "------------END RECEIVED JSON DATA------------\n")
     if 'challenge' in request.json:
         resp = request.json.get('challenge')
     else:
@@ -25,7 +25,6 @@ def event_watcher():
                     'event_msg': request.json['event']['text'],
                     'event_user': request.json['event']['user']
                 }
-                print("to_database dict - - - - - - -- - -- \n", to_database['event_user'])
                 cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
                 if bool(cursor.rowcount):
                     insert_data(to_database, cursor)            
