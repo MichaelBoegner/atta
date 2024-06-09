@@ -22,7 +22,7 @@ def event_watcher():
             resp = "POST /events HTTP/1.1 200" 
             if 'text' in request.json['event']:
                 to_database = {
-                    'event_msg': request.json['event']['text'],
+                    'event_msg': request.json['event']['text'].split(' ', 1)[1],
                     'event_user': request.json['event']['user']
                 }
                 cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
