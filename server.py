@@ -21,11 +21,9 @@ def event_watcher():
         if 'event' in request.json:
             resp = "POST /events HTTP/1.1 200" 
             if 'text' in request.json['event']:
-                to_database_event_msg = request.json['event']['text']
-                to_database_event_user = request.json['event']['user']
                 to_database = {
-                    'event_msg': to_database_event_msg,
-                    'event_user': to_database_event_user
+                    'event_msg': request.json['event']['text'],
+                    'event_user': request.json['event']['user']
                 }
                 print("to_database dict - - - - - - -- - -- \n", to_database['event_user'])
                 cursor.execute("select * from information_schema.tables where table_name=%s", ('wins',))
